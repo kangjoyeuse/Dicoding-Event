@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_active"
-        android:name="com.dicoding.dicodingevent.ui.active.ActiveFragment"
+        android:name="com.dicoding.dicodingevent.ui.active.PastFragment"
         android:label="@string/title_active"
         tools:layout="@layout/fragment_active" />
 
     <fragment
         android:id="@+id/navigation_past"
-        android:name="com.dicoding.dicodingevent.ui.past.PastFragment"
+        android:name="com.dicoding.dicodingevent.ui.past.PastFragmentFragment"
         android:label="@string/title_past"
         tools:layout="@layout/fragment_past" />
 </navigation>

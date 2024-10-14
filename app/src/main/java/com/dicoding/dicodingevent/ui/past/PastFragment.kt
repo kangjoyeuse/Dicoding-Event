@@ -4,32 +4,45 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.dicoding.dicodingevent.databinding.FragmentActiveBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.dicoding.dicodingevent.databinding.FragmentPastBinding
+import com.dicoding.dicodingevent.ui.EventAdapter
+import com.dicoding.dicodingevent.ui.past.PastViewModel
 
-class PastFragment : Fragment() {
+class PastFragmentFragment : Fragment() {
 
-    private var _binding: FragmentActiveBinding? = null
+    private var _binding: FragmentPastBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewModel: PastViewModel
+    private lateinit var adapter: EventAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        val activeViewModel =
-            ViewModelProvider(this).get(ActiveViewModel::class.java)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentPastBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        _binding = FragmentActiveBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val textView: TextView = binding.textActive
-        activeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        viewModel = ViewModelProvider(this).get(PastViewModel::class.java)
+        adapter = EventAdapter()
+
+        binding.rvPastEvents.layoutManager = LinearLayoutManager(context)
+        binding.rvPastEvents.adapter = adapter
+
+        viewModel.events.observe(viewLifecycleOwner) { events ->
+            adapter.setEvents(events)
         }
-        return root
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            // Handle error, e.g., show a Toast or Snackbar
+        }
     }
 
     override fun onDestroyView() {
