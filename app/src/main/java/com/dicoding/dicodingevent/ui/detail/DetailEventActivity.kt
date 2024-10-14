@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import com.dicoding.dicodingevent.data.ListEventsItem
 import com.dicoding.dicodingevent.databinding.ActivityDetailEventBinding
@@ -29,15 +30,15 @@ class DetailEventActivity : AppCompatActivity() {
 
     private fun displayEventDetails(event: ListEventsItem) {
         with(binding) {
+            tvEventName.text = event.name
+            tvEventOrganizer.text = "Organizer: ${event.ownerName}"
+            tvEventTime.text = "Time: ${formatDate(event.beginTime)} - ${formatDate(event.endTime)}"
+            tvEventQuota.text = "Available Slots: ${event.quota - event.registrants}"
+            tvEventDescription.text = HtmlCompat.fromHtml(event.description.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+
             Glide.with(this@DetailEventActivity)
                 .load(event.imageLogo)
                 .into(ivEventLogo)
-
-            tvEventName.text = event.name
-            tvEventOrganizer.text = "Organizer: ${event.ownerName}"
-            tvEventTime.text = "Time: ${formatDate(event.beginTime)}"
-            tvEventQuota.text = "Available Slots: ${event.quota - event.registrants}"
-            tvEventDescription.text = event.description
 
             btnOpenLink.setOnClickListener {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event.link))
@@ -47,9 +48,23 @@ class DetailEventActivity : AppCompatActivity() {
     }
 
     private fun formatDate(dateString: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        val possibleFormats = arrayOf(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'",
+            "yyyy-MM-dd HH:mm:ss"
+        )
         val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
-        val date = inputFormat.parse(dateString)
-        return outputFormat.format(date!!)
+
+        for (format in possibleFormats) {
+            try {
+                val inputFormat = SimpleDateFormat(format, Locale.getDefault())
+                inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+                val date = inputFormat.parse(dateString)
+                return date?.let { outputFormat.format(it) } ?: "Invalid date"
+            } catch (e: Exception) {
+                // Continue to the next format if parsing fails
+            }
+        }
+        return "Invalid date format"
     }
 }

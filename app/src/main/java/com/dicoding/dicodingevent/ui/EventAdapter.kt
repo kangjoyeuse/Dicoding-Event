@@ -27,18 +27,26 @@ class EventAdapter : RecyclerView.Adapter<EventAdapter.EventViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: EventViewHolder, position: Int) {
-        val event = events[position]  // Menggunakan akses langsung ke list events
+        val event = events[position]
         holder.bind(event)
-        holder.itemView.setOnClickListener {
-            val intent = Intent(holder.itemView.context, DetailEventActivity::class.java)
-            intent.putExtra(DetailEventActivity.EXTRA_EVENT, event)
-            holder.itemView.context.startActivity(intent)
-        }
     }
 
     override fun getItemCount() = events.size
 
-    class EventViewHolder(private val binding: ItemEventBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class EventViewHolder(private val binding: ItemEventBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val event = events[position]
+                    val intent = Intent(itemView.context, DetailEventActivity::class.java).apply {
+                        putExtra(DetailEventActivity.EXTRA_EVENT, event)
+                    }
+                    itemView.context.startActivity(intent)
+                }
+            }
+        }
+
         fun bind(event: ListEventsItem) {
             binding.tvEventName.text = event.name
             binding.tvEventDate.text = formatDate(event.beginTime, event.endTime)
