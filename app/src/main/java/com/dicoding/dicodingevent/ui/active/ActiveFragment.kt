@@ -26,7 +26,7 @@ class ActiveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(ActiveViewModel::class.java)
+        viewModel = ViewModelProvider(this)[ActiveViewModel::class.java]
         adapter = EventAdapter()
 
         binding.rvActiveEvents.layoutManager = LinearLayoutManager(context)

@@ -6,8 +6,8 @@ import retrofit2.http.Query
 
 interface ApiService {
 //    Contoh api endpoint untuk mendapatkan event
-    @GET("events")
-    suspend fun getEvents(@Query("active") active: Int): EventResponse
+//    @GET("events")
+//    suspend fun getEvents(@Query("active") active: Int): EventResponse
 
 
 //    @GET("events")

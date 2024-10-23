@@ -27,7 +27,7 @@ class PastFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this).get(PastViewModel::class.java)
+        viewModel = ViewModelProvider(this)[PastViewModel::class.java]
         adapter = EventAdapter()
 
         binding.rvPastEvents.layoutManager = LinearLayoutManager(context)

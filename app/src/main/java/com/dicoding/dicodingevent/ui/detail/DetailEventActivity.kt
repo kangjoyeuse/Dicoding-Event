@@ -1,5 +1,6 @@
 package com.dicoding.dicodingevent.ui.detail
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -12,6 +13,7 @@ import com.dicoding.dicodingevent.databinding.ActivityDetailEventBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("DEPRECATION")
 class DetailEventActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailEventBinding
@@ -29,6 +31,7 @@ class DetailEventActivity : AppCompatActivity() {
         event?.let { displayEventDetails(it) }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun displayEventDetails(event: ListEventsItem) {
         with(binding) {
             tvEventName.text = event.name
