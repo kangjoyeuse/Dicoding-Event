@@ -26,7 +26,7 @@ class ActiveViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val response = ApiConfig.apiService.getEvents(1) // 1 for active events
+                val response = ApiConfig.apiService.getActiveEvents() // 1 for active events
                 if (!response.error) {
                     _events.value = response.listEvents
                 } else {
