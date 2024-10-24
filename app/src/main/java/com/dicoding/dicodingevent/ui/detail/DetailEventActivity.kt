@@ -6,10 +6,14 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.dicoding.dicodingevent.R
+import com.dicoding.dicodingevent.data.AppDatabase
+import com.dicoding.dicodingevent.data.FavoriteEvent
 import com.dicoding.dicodingevent.data.ListEventsItem
 import com.dicoding.dicodingevent.databinding.ActivityDetailEventBinding
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,6 +21,10 @@ import java.util.*
 class DetailEventActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailEventBinding
+//    Favorite Feature
+    private lateinit var database: AppDatabase
+    private var isFavorite = false
+    private var currentEvent: ListEventsItem? = null
 
     companion object {
         const val EXTRA_EVENT = "extra_event"
@@ -27,8 +35,22 @@ class DetailEventActivity : AppCompatActivity() {
         binding = ActivityDetailEventBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val event = intent.getParcelableExtra<ListEventsItem>(EXTRA_EVENT)
-        event?.let { displayEventDetails(it) }
+//        Define Database
+        database = AppDatabase.getDatabase(this)
+
+
+//        val event = intent.getParcelableExtra<ListEventsItem>(EXTRA_EVENT)
+//        event?.let { displayEventDetails(it) }
+
+        currentEvent = intent.getParcelableExtra(EXTRA_EVENT)
+        currentEvent?.let { event ->
+            displayEventDetails(event)
+            checkFavoriteStatus(event.id)
+        }
+
+        binding.btnFavorite.setOnClickListener {
+            toggleFavorite()
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -74,5 +96,58 @@ class DetailEventActivity : AppCompatActivity() {
             }
         }
         return "Foramt data yang dimasukan tidak benar"
+    }
+
+    private fun checkFavoriteStatus(eventId: Int) {
+        lifecycleScope.launch {
+            val favoriteEvent = database.favoriteEventDao().getFavoriteById(eventId.toString())
+            isFavorite = favoriteEvent != null
+            updateFavoriteButtonUI()
+        }
+    }
+
+    private fun toggleFavorite() {
+        currentEvent?.let { event ->
+            lifecycleScope.launch {
+                if (isFavorite) {
+                    database.favoriteEventDao().deleteFavorite(
+                        FavoriteEvent(
+                        id = event.id,
+                        name = event.name,
+                        ownerName = event.ownerName,
+                        beginTime = event.beginTime,
+                        endTime = event.endTime,
+                        quota = event.quota,
+                        registrants = event.registrants,
+                        description = event.description,
+                        imageLogo = event.imageLogo,
+                        link = event.link
+                    )
+                    )
+                } else {
+                    database.favoriteEventDao().insertFavorite(FavoriteEvent(
+                        id = event.id,
+                        name = event.name,
+                        ownerName = event.ownerName,
+                        beginTime = event.beginTime,
+                        endTime = event.endTime,
+                        quota = event.quota,
+                        registrants = event.registrants,
+                        description = event.description,
+                        imageLogo = event.imageLogo,
+                        link = event.link
+                    ))
+                }
+                isFavorite = !isFavorite
+                updateFavoriteButtonUI()
+            }
+        }
+    }
+
+    private fun updateFavoriteButtonUI() {
+        binding.btnFavorite.setImageResource(
+            if (isFavorite) R.drawable.hearth_fill_solid
+            else R.drawable.hearth_border
+        )
     }
 }
