@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dicoding.dicodingevent.data.FavoriteEvent
 import com.dicoding.dicodingevent.databinding.ItemEventBinding
-import com.dicoding.dicodingevent.ui.detail.DetailEventActivity
+import com.dicoding.dicodingevent.ui.detail.FavoriteEventDetailActivity
+import java.text.SimpleDateFormat
+import java.util.Locale
+
+//import com.dicoding.dicodingevent.databinding.ItemFavoriteBinding
 
 class FavoriteAdapter : ListAdapter<FavoriteEvent, FavoriteAdapter.FavoriteViewHolder>(DiffCallback()) {
 
@@ -19,30 +23,56 @@ class FavoriteAdapter : ListAdapter<FavoriteEvent, FavoriteAdapter.FavoriteViewH
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
-        val favorite = getItem(position)
-        holder.bind(favorite)
+        val currentItem = getItem(position)
+        holder.bind(currentItem)
     }
 
-    inner class FavoriteViewHolder(private val binding: ItemEventBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(favorite: FavoriteEvent) {
-            binding.tvEventName.text = favorite.name
-            binding.tvEventDate.text = favorite.beginTime // Assuming you have a date field
+    class FavoriteViewHolder(private val binding: ItemEventBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(favoriteEvent: FavoriteEvent) {
+            binding.apply {
+                tvEventName.text = favoriteEvent.name
+                tvEventDate.text = formatDate(favoriteEvent.beginTime, favoriteEvent.endTime)
+                Glide.with(binding.root.context)
+                    .load(favoriteEvent.imageLogo)
+                    .into(binding.ivEventLogo)
 
-            Glide.with(itemView.context)
-                .load(favorite.imageLogo) // Assuming you have an imageUrl field
-                .into(binding.ivEventLogo)
-
-            itemView.setOnClickListener {
-                val intent = Intent(itemView.context, DetailEventActivity::class.java).apply {
-                    putExtra(DetailEventActivity.EXTRA_EVENT, favorite.id)
+                root.setOnClickListener {
+                    val intent = Intent(root.context, FavoriteEventDetailActivity::class.java).apply {
+                        putExtra(FavoriteEventDetailActivity.EXTRA_FAVORITE_EVENT, favoriteEvent.id.toString())
+                    }
+                    root.context.startActivity(intent)
                 }
-                itemView.context.startActivity(intent)
+            }
+        }
+
+        private fun formatDate(beginTime: String, endTime: String): String {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale.getDefault())
+
+            try {
+                val beginDate = inputFormat.parse(beginTime)
+                val endDate = inputFormat.parse(endTime)
+
+                return if (beginDate != null && endDate != null) {
+                    "${outputFormat.format(beginDate)} - ${outputFormat.format(endDate)}"
+                } else {
+                    "Invalid date"
+                }
+            } catch (e: Exception) {
+                return "Invalid date format"
             }
         }
     }
 
+
+
+
     class DiffCallback : DiffUtil.ItemCallback<FavoriteEvent>() {
-        override fun areItemsTheSame(oldItem: FavoriteEvent, newItem: FavoriteEvent) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: FavoriteEvent, newItem: FavoriteEvent) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: FavoriteEvent, newItem: FavoriteEvent) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: FavoriteEvent, newItem: FavoriteEvent) =
+            oldItem == newItem
     }
 }

@@ -6,15 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.dicoding.dicodingevent.data.AppDatabase
 import com.dicoding.dicodingevent.databinding.FragmentFavoriteBinding
 
 class FavoriteFragment : Fragment() {
+
     private var _binding: FragmentFavoriteBinding? = null
     private val binding get() = _binding!!
-    private lateinit var favoriteAdapter: FavoriteAdapter
+
     private lateinit var viewModel: FavoriteViewModel
+    private val favoriteAdapter = FavoriteAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
@@ -24,21 +27,23 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[FavoriteViewModel::class.java]
+        val database = AppDatabase.getDatabase(requireContext())
+        val viewModelFactory = FavoriteViewModelFactory(database)
+        viewModel = ViewModelProvider(this, viewModelFactory)[FavoriteViewModel::class.java]
+
         setupRecyclerView()
         observeFavorites()
     }
 
     private fun setupRecyclerView() {
-        favoriteAdapter = FavoriteAdapter()
-        binding.rvFavorites.apply {
-            layoutManager = LinearLayoutManager(context)
+        binding.recyclerViewFavorites.apply {
             adapter = favoriteAdapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
     private fun observeFavorites() {
-        viewModel.getAllFavorites().asLiveData().observe(viewLifecycleOwner) { favorites ->
+        viewModel.allFavorites.observe(viewLifecycleOwner) { favorites ->
             favoriteAdapter.submitList(favorites)
         }
     }
