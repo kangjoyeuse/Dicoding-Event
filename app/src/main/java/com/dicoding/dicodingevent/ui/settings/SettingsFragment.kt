@@ -4,17 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import com.dicoding.dicodingevent.R
+import androidx.lifecycle.lifecycleScope
+import com.dicoding.dicodingevent.data.ThemePreferences
+import com.dicoding.dicodingevent.data.dataStore
 import com.dicoding.dicodingevent.databinding.FragmentSettingsBinding
-import com.google.android.material.switchmaterial.SwitchMaterial
+import kotlinx.coroutines.launch
+
 
 class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+    private lateinit var themePreferences: ThemePreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,18 +31,29 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val switchTheme = view.findViewById<SwitchMaterial>(R.id.switch_theme)
+        themePreferences = ThemePreferences.getInstance(requireContext().dataStore)
 
-        // Set the initial state of the switch based on the current theme
-        switchTheme.isChecked = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
-
-        switchTheme.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        // Observe theme settings
+        viewLifecycleOwner.lifecycleScope.launch {
+            themePreferences.getThemeSetting().collect { isDarkModeActive ->
+                updateTheme(isDarkModeActive)
+                binding.switchTheme.isChecked = isDarkModeActive
             }
         }
+
+        // Set listener for theme switch
+        binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
+            viewLifecycleOwner.lifecycleScope.launch {
+                themePreferences.saveThemeSetting(isChecked)
+            }
+        }
+    }
+
+    private fun updateTheme(isDarkModeActive: Boolean) {
+        AppCompatDelegate.setDefaultNightMode(
+            if (isDarkModeActive) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
+        )
     }
 
     override fun onDestroyView() {
