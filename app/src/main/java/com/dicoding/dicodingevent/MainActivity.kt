@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
         AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_active, R.id.navigation_past
+                R.id.navigation_home, R.id.navigation_active, R.id.navigation_past, R.id.navigation_settings
             )
         )
 //        setupActionBarWithNavController(navController, appBarConfiguration)
