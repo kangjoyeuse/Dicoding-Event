@@ -16,6 +16,7 @@
             android:layout_height="200dp"
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="16dp"
             tools:src="@tools:sample/backgrounds/scenic" />
 
         <TextView
@@ -78,12 +79,16 @@
             android:id="@+id/btnFavorite"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginTop="-24dp"
+            android:background="@drawable/circular_button_background"
+            android:contentDescription="favorite"
             android:src="@drawable/hearth_border"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="16dp"
-            android:contentDescription="Favorite" />
+            app:layout_constraintHorizontal_bias="0.942"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_event_logo"
+            app:tint="@color/md_theme_onPrimary" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
