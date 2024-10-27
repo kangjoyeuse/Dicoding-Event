@@ -1,58 +1,39 @@
 package com.dicoding.dicodingevent.ui.favorite
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.dicoding.dicodingevent.data.AppDatabase
 import com.dicoding.dicodingevent.data.FavoriteEvent
-import kotlinx.coroutines.flow.Flow
+import com.dicoding.dicodingevent.data.Repository
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-class FavoriteViewModel(private val database: AppDatabase) : ViewModel() {
-    private val favoriteDao = database.favoriteEventDao()
+class FavoriteViewModel(private val repository: Repository) : ViewModel() {
 
-    // Get all favorites as LiveData
-    val allFavorites = favoriteDao.getAllFavorites().asLiveData()
+    private val _favorites = MutableLiveData<List<FavoriteEvent>>()
+    val favorites: LiveData<List<FavoriteEvent>> = _favorites
 
-    // Add a new favorite event
-    fun addFavorite(favoriteEvent: FavoriteEvent) {
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    init {
+        loadFavorites()
+    }
+
+    private fun loadFavorites() {
         viewModelScope.launch {
-            favoriteDao.insertFavorite(favoriteEvent)
+            _isLoading.value = true
+            repository.getAllFavorites().collect { favoriteList ->
+                _favorites.value = favoriteList
+                _isLoading.value = false
+            }
         }
     }
 
-    // Delete a favorite event
-    fun deleteFavorite(favoriteEvent: FavoriteEvent) {
+    fun removeFavorite(favoriteEvent: FavoriteEvent) {
         viewModelScope.launch {
-            favoriteDao.deleteFavorite(favoriteEvent)
+            repository.deleteFavorite(favoriteEvent)
         }
-    }
-
-    // Delete a favorite event by ID
-    fun deleteFavoriteById(eventId: String) {
-        viewModelScope.launch {
-            favoriteDao.deleteFavoriteById(eventId)
-        }
-    }
-
-    // Check if an event is favorited
-    fun isEventFavorited(eventId: String): Flow<Boolean> {
-        return favoriteDao.isEventFavorited(eventId)
-    }
-
-    // Get a favorite event by ID
-    suspend fun getFavoriteById(eventId: String): FavoriteEvent? {
-        return favoriteDao.getFavoriteById(eventId)
-    }
-}
-
-class FavoriteViewModelFactory(private val database: AppDatabase) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FavoriteViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return FavoriteViewModel(database) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

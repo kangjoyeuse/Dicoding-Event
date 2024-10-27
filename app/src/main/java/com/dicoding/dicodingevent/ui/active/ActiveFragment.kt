@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.dicodingevent.databinding.FragmentActiveBinding
 import com.dicoding.dicodingevent.ui.EventAdapter
+import com.dicoding.dicodingevent.ui.ViewModelFactory
 
 class ActiveFragment : Fragment() {
 
@@ -26,7 +27,7 @@ class ActiveFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[ActiveViewModel::class.java]
+        viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireContext()))[ActiveViewModel::class.java]
         adapter = EventAdapter()
 
         binding.rvActiveEvents.layoutManager = LinearLayoutManager(context)

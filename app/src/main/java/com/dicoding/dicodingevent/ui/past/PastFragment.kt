@@ -1,7 +1,6 @@
 package com.dicoding.dicodingevent.ui.past
 
 import android.os.Bundle
-// import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.dicodingevent.databinding.FragmentPastBinding
 import com.dicoding.dicodingevent.ui.EventAdapter
+import com.dicoding.dicodingevent.ui.ViewModelFactory
 
 class PastFragment : Fragment() {
 
@@ -27,7 +27,9 @@ class PastFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[PastViewModel::class.java]
+        val factory = ViewModelFactory.getInstance(requireContext())
+        viewModel = ViewModelProvider(this, factory)[PastViewModel::class.java]
+
         adapter = EventAdapter()
 
         binding.rvPastEvents.layoutManager = LinearLayoutManager(context)

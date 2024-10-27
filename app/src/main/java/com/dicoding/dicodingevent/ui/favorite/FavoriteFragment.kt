@@ -7,17 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.dicoding.dicodingevent.data.AppDatabase
 import com.dicoding.dicodingevent.databinding.FragmentFavoriteBinding
+import com.dicoding.dicodingevent.ui.ViewModelFactory
 
 class FavoriteFragment : Fragment() {
 
     private var _binding: FragmentFavoriteBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var viewModel: FavoriteViewModel
-    private val favoriteAdapter = FavoriteAdapter()
+    private lateinit var adapter: FavoriteAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
@@ -27,24 +25,20 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val database = AppDatabase.getDatabase(requireContext())
-        val viewModelFactory = FavoriteViewModelFactory(database)
-        viewModel = ViewModelProvider(this, viewModelFactory)[FavoriteViewModel::class.java]
+        val factory = ViewModelFactory.getInstance(requireContext())
+        viewModel = ViewModelProvider(this, factory)[FavoriteViewModel::class.java]
 
-        setupRecyclerView()
-        observeFavorites()
-    }
+        adapter = FavoriteAdapter()
+        binding.rvFavorites.layoutManager = LinearLayoutManager(context)
+        binding.rvFavorites.adapter = adapter
 
-    private fun setupRecyclerView() {
-        binding.recyclerViewFavorites.apply {
-            adapter = favoriteAdapter
-            layoutManager = LinearLayoutManager(requireContext())
+        viewModel.favorites.observe(viewLifecycleOwner) { favorites ->
+            adapter.submitList(favorites)
+            binding.tvEmptyFavorites.visibility = if (favorites.isEmpty()) View.VISIBLE else View.GONE
         }
-    }
 
-    private fun observeFavorites() {
-        viewModel.allFavorites.observe(viewLifecycleOwner) { favorites ->
-            favoriteAdapter.submitList(favorites)
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
     }
 
