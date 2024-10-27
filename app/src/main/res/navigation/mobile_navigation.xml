@@ -21,4 +21,16 @@
         android:name="com.dicoding.dicodingevent.ui.past.PastFragment"
         android:label="@string/title_past"
         tools:layout="@layout/fragment_past" />
+
+    <fragment
+        android:id="@+id/navigation_favorite"
+        android:name="com.dicoding.dicodingevent.ui.favorite.FavoriteFragment"
+        android:label="Favorite"
+        tools:layout="@layout/fragment_favorite" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.dicoding.dicodingevent.ui.settings.SettingsFragment"
+        android:label="Favorite"
+        tools:layout="@layout/fragment_settings" />
 </navigation>

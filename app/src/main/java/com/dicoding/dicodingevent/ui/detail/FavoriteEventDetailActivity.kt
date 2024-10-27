@@ -11,23 +11,21 @@ import com.bumptech.glide.Glide
 import com.dicoding.dicodingevent.R
 import com.dicoding.dicodingevent.data.AppDatabase
 import com.dicoding.dicodingevent.data.FavoriteEvent
-import com.dicoding.dicodingevent.data.ListEventsItem
 import com.dicoding.dicodingevent.databinding.ActivityDetailEventBinding
+import com.dicoding.dicodingevent.ui.detail.DetailEventActivity.Companion.EXTRA_EVENT
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-@Suppress("DEPRECATION")
-class DetailEventActivity : AppCompatActivity() {
+class FavoriteEventDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetailEventBinding
-//    Favorite Feature
     private lateinit var database: AppDatabase
+    private var currentEvent: FavoriteEvent? = null
     private var isFavorite = false
-    private var currentEvent: ListEventsItem? = null
 
     companion object {
-        const val EXTRA_EVENT = "extra_event"
+        const val EXTRA_FAVORITE_EVENT = "extra_favorite_event"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,26 +33,40 @@ class DetailEventActivity : AppCompatActivity() {
         binding = ActivityDetailEventBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        Define Database
         database = AppDatabase.getDatabase(this)
 
+//        val eventId = intent.getStringExtra(EXTRA_FAVORITE_EVENT)
 
-//        val event = intent.getParcelableExtra<ListEventsItem>(EXTRA_EVENT)
-//        event?.let { displayEventDetails(it) }
+//    eventId?.let { id ->
+//        lifecycleScope.launch {
+//            val favoriteEvent = database.favoriteEventDao().getFavoriteById(id)
+//            favoriteEvent?.let {
+//                currentEvent = it
+//                displayEventDetails(it)
+//            }
+//        }
+//    }
 
-        currentEvent = intent.getParcelableExtra(EXTRA_EVENT)
-        currentEvent?.let { event ->
-            displayEventDetails(event)
-            checkFavoriteStatus(event.id)
+        val eventId = intent.getStringExtra(EXTRA_FAVORITE_EVENT)
+        eventId?.let { id ->
+            lifecycleScope.launch {
+                val favoriteEvent = database.favoriteEventDao().getFavoriteById(id)
+                favoriteEvent?.let { event ->
+                    currentEvent = event
+                    displayEventDetails(event)
+                    checkFavoriteStatus(event.id)
+                }
+            }
         }
 
         binding.btnFavorite.setOnClickListener {
             toggleFavorite()
         }
+
     }
 
     @SuppressLint("SetTextI18n")
-    private fun displayEventDetails(event: ListEventsItem) {
+    private fun displayEventDetails(event: FavoriteEvent) {
         with(binding) {
             tvEventName.text = event.name
             tvEventOrganizer.text = getString(R.string.penyelengra_acara, event.ownerName)
@@ -66,7 +78,7 @@ class DetailEventActivity : AppCompatActivity() {
             tvEventQuota.text = "Kuota Event yang tersedia: ${event.quota - event.registrants}"
             tvEventDescription.text = HtmlCompat.fromHtml(event.description, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
-            Glide.with(this@DetailEventActivity)
+            Glide.with(this@FavoriteEventDetailActivity)
                 .load(event.imageLogo)
                 .into(ivEventLogo)
 
@@ -74,6 +86,9 @@ class DetailEventActivity : AppCompatActivity() {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event.link))
                 startActivity(intent)
             }
+
+            // Set favorite button to filled heart
+            btnFavorite.setImageResource(R.drawable.hearth_fill_solid)
         }
     }
 
@@ -95,8 +110,10 @@ class DetailEventActivity : AppCompatActivity() {
                 // Continue to the next format if parsing fails
             }
         }
-        return "Foramt data yang dimasukan tidak benar"
+        return "Format data yang dimasukan tidak benar"
     }
+
+
 
     private fun checkFavoriteStatus(eventId: Int) {
         lifecycleScope.launch {
@@ -112,17 +129,17 @@ class DetailEventActivity : AppCompatActivity() {
                 if (isFavorite) {
                     database.favoriteEventDao().deleteFavorite(
                         FavoriteEvent(
-                        id = event.id,
-                        name = event.name,
-                        ownerName = event.ownerName,
-                        beginTime = event.beginTime,
-                        endTime = event.endTime,
-                        quota = event.quota,
-                        registrants = event.registrants,
-                        description = event.description,
-                        imageLogo = event.imageLogo,
-                        link = event.link
-                    )
+                            id = event.id,
+                            name = event.name,
+                            ownerName = event.ownerName,
+                            beginTime = event.beginTime,
+                            endTime = event.endTime,
+                            quota = event.quota,
+                            registrants = event.registrants,
+                            description = event.description,
+                            imageLogo = event.imageLogo,
+                            link = event.link
+                        )
                     )
                 } else {
                     database.favoriteEventDao().insertFavorite(FavoriteEvent(
