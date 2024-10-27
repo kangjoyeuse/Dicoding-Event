@@ -29,7 +29,7 @@ class RepositoryImpl(
     }
 
     override suspend fun getNearestActiveEvent(): ListEventsItem? {
-        return apiService.getNotificationEvents(limit = 1).listEvents.firstOrNull()
+        return apiService.getActiveEvents(-1, 1).listEvents.firstOrNull()
     }
 
 //    suspend fun getFavoriteById(eventId: String): FavoriteEvent? {

@@ -59,18 +59,19 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.glide)
     implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx.v241)
+//    implementation(libs.androidx.lifecycle.viewmodel.ktx.v241)
 //    implementation(libs.androidx.lifecycle.livedata.ktx.v241)
     implementation(libs.glide)
 
 //  Room Database
     implementation(libs.androidx.room.runtime.v261)
     implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler.v261)
+    ksp(libs.androidx.room.compiler)
+//    ksp(libs.androidx.room.compiler.v261)
 
 //    DarkMode
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx.v261)
+//    implementation(libs.androidx.lifecycle.viewmodel.ktx.v261)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
