@@ -10,4 +10,7 @@ interface Repository {
     fun getAllFavorites(): Flow<List<FavoriteEvent>>
     suspend fun insertFavorite(event: FavoriteEvent)
     suspend fun deleteFavorite(event: FavoriteEvent)
+
+    // mETODE MANAJEMEN notifiacion
+    suspend fun getNearestActiveEvent(): ListEventsItem?
 }

@@ -28,6 +28,10 @@ class RepositoryImpl(
         favoriteEventDao.deleteFavorite(event)
     }
 
+    override suspend fun getNearestActiveEvent(): ListEventsItem? {
+        return apiService.getNotificationEvents(limit = 1).listEvents.firstOrNull()
+    }
+
 //    suspend fun getFavoriteById(eventId: String): FavoriteEvent? {
 //        return favoriteEventDao.getFavoriteById(eventId)
 //    }
