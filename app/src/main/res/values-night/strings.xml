@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="str_icon_favorite_round_blue_image_that_contain_love">A round blue image, inside of which there is a love icon, which indicates that you like the event</string>
+    <string name="btn_opening_evenst_link">Open Event Link</string>
+    <string name="image_cover_for_eventl">Image cover for eventl</string>
+</resources>

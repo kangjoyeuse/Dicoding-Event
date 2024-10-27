@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.dicodingevent.api.ApiConfig
 import com.dicoding.dicodingevent.data.AppDatabase
-import com.dicoding.dicodingevent.data.ListEventsItem
+//import com.dicoding.dicodingevent.data.ListEventsItem
 import com.dicoding.dicodingevent.data.RepositoryImpl
 import com.dicoding.dicodingevent.data.ThemePreferences
 import com.dicoding.dicodingevent.data.dataStore
@@ -113,23 +113,23 @@ class HomeFragment : Fragment() {
         _binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private suspend fun getActiveEvents(): List<ListEventsItem> {
-        val response = ApiConfig.apiService.getActiveEvents()
-        return if (!response.error) {
-            response.listEvents
-        } else {
-            emptyList()
-        }
-    }
+//    private suspend fun getActiveEvents(): List<ListEventsItem> {
+//        val response = ApiConfig.apiService.getActiveEvents()
+//        return if (!response.error) {
+//            response.listEvents
+//        } else {
+//            emptyList()
+//        }
+//    }
 
-    private suspend fun getPastEvents(): List<ListEventsItem> {
-        val response = ApiConfig.apiService.getPastEvents(0, 5)
-        return if (!response.error) {
-            response.listEvents
-        } else {
-            emptyList()
-        }
-    }
+//    private suspend fun getPastEvents(): List<ListEventsItem> {
+//        val response = ApiConfig.apiService.getPastEvents(0, 5)
+//        return if (!response.error) {
+//            response.listEvents
+//        } else {
+//            emptyList()
+//        }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

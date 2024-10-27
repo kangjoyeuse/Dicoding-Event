@@ -12,7 +12,7 @@ import com.dicoding.dicodingevent.R
 import com.dicoding.dicodingevent.data.AppDatabase
 import com.dicoding.dicodingevent.data.FavoriteEvent
 import com.dicoding.dicodingevent.databinding.ActivityDetailEventBinding
-import com.dicoding.dicodingevent.ui.detail.DetailEventActivity.Companion.EXTRA_EVENT
+//import com.dicoding.dicodingevent.ui.detail.DetailEventActivity.Companion.EXTRA_EVENT
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*

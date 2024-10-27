@@ -5,7 +5,7 @@ import androidx.work.*
 import com.dicoding.dicodingevent.worker.DailyReminderWorker
 import java.util.concurrent.TimeUnit
 
-class ReminderManager(private val context: Context) {
+class ReminderManager(context: Context) {
     private val workManager = WorkManager.getInstance(context)
 
     fun scheduleReminder(isEnabled: Boolean) {
@@ -22,7 +22,7 @@ class ReminderManager(private val context: Context) {
 
             workManager.enqueueUniquePeriodicWork(
                 WORK_NAME,
-                ExistingPeriodicWorkPolicy.REPLACE,
+                ExistingPeriodicWorkPolicy.UPDATE,
                 dailyWorkRequest
             )
         } else {

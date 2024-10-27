@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dicoding.dicodingevent.data.FavoriteEvent
 import com.dicoding.dicodingevent.data.Repository
-import kotlinx.coroutines.flow.collect
+//import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class FavoriteViewModel(private val repository: Repository) : ViewModel() {
@@ -31,9 +31,9 @@ class FavoriteViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
-    fun removeFavorite(favoriteEvent: FavoriteEvent) {
-        viewModelScope.launch {
-            repository.deleteFavorite(favoriteEvent)
-        }
-    }
+//    fun removeFavorite(favoriteEvent: FavoriteEvent) {
+//        viewModelScope.launch {
+//            repository.deleteFavorite(favoriteEvent)
+//        }
+//    }
 }
