@@ -20,11 +20,16 @@ import com.dicoding.dicodingevent.ui.EventAdapter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+// Note To-do
+// Ini dikarenakan terdapat satu indikator loading untuk menghandle 2 request ada ke api ( upcoming dan finished ). Silahkan diperbaiki dahulu ya, kamu bisa gunakan indikator loading tersendiri untuk tiap section.
+// Fix: buat 2 loading indicator
+
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private lateinit var themePreferences: ThemePreferences
     private lateinit var repository: RepositoryImpl
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -64,8 +69,8 @@ class HomeFragment : Fragment() {
     private fun setupActiveEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                showLoading(true)
-                val activeEvents = repository.getActiveEvents(5) // Mengambil 5 event aktif
+                showLoadingUpcoming(true)
+                val activeEvents = repository.getActiveEvents(5)
                 if (isAdded && _binding != null) {
                     val activeAdapter = EventAdapter()
                     activeAdapter.setEvents(activeEvents)
@@ -79,7 +84,7 @@ class HomeFragment : Fragment() {
                 Log.e("HomeFragment", "Gagal meresponse active events, error: ${e.message}")
             } finally {
                 if (isAdded) {
-                    showLoading(false)
+                    showLoadingUpcoming(false)
                 }
             }
         }
@@ -88,8 +93,8 @@ class HomeFragment : Fragment() {
     private fun setupPastEvents() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                showLoading(true)
-                val pastEvents = repository.getPastEvents(5) // Mengambil 5 event yang sudah lewat
+                showLoadingFinished(true)
+                val pastEvents = repository.getPastEvents(5)
                 if (isAdded && _binding != null) {
                     val pastAdapter = EventAdapter()
                     pastAdapter.setEvents(pastEvents)
@@ -103,14 +108,18 @@ class HomeFragment : Fragment() {
                 Log.e("HomeFragment", "Gagal meresponse past events, error: ${e.message}")
             } finally {
                 if (isAdded) {
-                    showLoading(false)
+                    showLoadingFinished(false)
                 }
             }
         }
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        _binding?.progressBar?.visibility = if (isLoading) View.VISIBLE else View.GONE
+    private fun showLoadingUpcoming(isLoading: Boolean) {
+        _binding?.progressBarUpcming?.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    private fun showLoadingFinished(isLoading: Boolean) {
+        _binding?.progressBarFinihed?.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
 //    private suspend fun getActiveEvents(): List<ListEventsItem> {
