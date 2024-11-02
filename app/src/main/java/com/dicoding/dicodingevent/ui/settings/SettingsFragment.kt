@@ -10,14 +10,16 @@ import androidx.lifecycle.lifecycleScope
 import com.dicoding.dicodingevent.data.ThemePreferences
 import com.dicoding.dicodingevent.data.dataStore
 import com.dicoding.dicodingevent.databinding.FragmentSettingsBinding
+import com.dicoding.dicodingevent.manager.ReminderManager
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-
 
 class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private lateinit var themePreferences: ThemePreferences
+    private lateinit var reminderManager: ReminderManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,20 +34,31 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         themePreferences = ThemePreferences.getInstance(requireContext().dataStore)
+        reminderManager = ReminderManager(requireContext())
 
-        // Observe theme settings
+        // Initialize switch states
         viewLifecycleOwner.lifecycleScope.launch {
-            themePreferences.getThemeSetting().collect { isDarkModeActive ->
-                updateTheme(isDarkModeActive)
-                binding.switchTheme.isChecked = isDarkModeActive
-            }
+            // Set theme switch state
+            val isDarkModeActive = themePreferences.getThemeSetting().first()
+            binding.switchTheme.isChecked = isDarkModeActive
+            updateTheme(isDarkModeActive)
+
+            // Set reminder switch state
+            val isReminderEnabled = themePreferences.getReminderSetting().first()
+            binding.switchReminder.isChecked = isReminderEnabled
         }
 
         // Set listener for theme switch
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
             viewLifecycleOwner.lifecycleScope.launch {
                 themePreferences.saveThemeSetting(isChecked)
+                updateTheme(isChecked)
             }
+        }
+
+        // Set listener for reminder switch
+        binding.switchReminder.setOnCheckedChangeListener { _, isChecked ->
+            setReminderEnabled(isChecked)
         }
     }
 
@@ -54,6 +67,13 @@ class SettingsFragment : Fragment() {
             if (isDarkModeActive) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO
         )
+    }
+
+    private fun setReminderEnabled(isEnabled: Boolean) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            themePreferences.saveReminderSetting(isEnabled)
+            reminderManager.scheduleReminder(isEnabled)
+        }
     }
 
     override fun onDestroyView() {

@@ -21,4 +21,7 @@ interface ApiService {
     // Testing only
     @GET("events")
     suspend fun getPastEvents(@Query("active") active: Int = 0, @Query("limit") limit: Int = 20): EventResponse
+
+//    @GET("events")
+//    suspend fun getNotificationEvents(@Query("active") active: Int = -1, @Query("limit") limit: Int = 1): EventResponse
 }

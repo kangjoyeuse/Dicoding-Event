@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dicoding.dicodingevent.api.ApiConfig
 import com.dicoding.dicodingevent.data.ListEventsItem
+import com.dicoding.dicodingevent.data.Repository
 import kotlinx.coroutines.launch
 
-class ActiveViewModel : ViewModel() {
+class ActiveViewModel(private val repository: Repository) : ViewModel() {
     private val _events = MutableLiveData<List<ListEventsItem>>()
     val events: LiveData<List<ListEventsItem>> = _events
 
@@ -26,14 +26,10 @@ class ActiveViewModel : ViewModel() {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val response = ApiConfig.apiService.getActiveEvents() // 1 for active events
-                if (!response.error) {
-                    _events.value = response.listEvents
-                } else {
-                    _error.value = response.message
-                }
+                val activeEvents = repository.getActiveEvents(limit = 20) // Menggunakan limit 20 sebagai contoh
+                _events.value = activeEvents
             } catch (e: Exception) {
-                _error.value = "Tidak dapat terhubungan dengan server api, mendapatkan error berikut: ${e.message}"
+                _error.value = "Tidak dapat terhubung dengan server: ${e.message}"
             } finally {
                 _isLoading.value = false
             }

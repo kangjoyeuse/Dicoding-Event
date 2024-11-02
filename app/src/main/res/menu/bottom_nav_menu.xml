@@ -4,7 +4,7 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="Home" />
+        android:title="@string/home_tx" />
 
     <item
         android:id="@+id/navigation_active"
@@ -19,11 +19,11 @@
     <item
         android:id="@+id/navigation_favorite"
         android:icon="@drawable/hearth_border"
-        android:title="Favorite" />
+        android:title="@string/favorite_tx" />
 
     <item
         android:id="@+id/navigation_settings"
         android:icon="@drawable/settings"
-        android:title="Settings" />
+        android:title="@string/settings_tx" />
 
 </menu>

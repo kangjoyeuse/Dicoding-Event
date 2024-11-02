@@ -14,8 +14,10 @@
             android:id="@+id/iv_event_logo"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:contentDescription="@string/image_cover_for_eventl"
             android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ImageContrastCheck"
             tools:layout_editor_absoluteX="16dp"
             tools:src="@tools:sample/backgrounds/scenic" />
 
@@ -23,7 +25,7 @@
             android:id="@+id/tv_event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +73,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Open Event Link"
+            android:text="@string/btn_opening_evenst_link"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_event_description" />
 
@@ -81,7 +84,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="-24dp"
             android:background="@drawable/circular_button_background"
-            android:contentDescription="favorite"
+            android:contentDescription="@string/str_icon_favorite_round_blue_image_that_contain_love"
             android:src="@drawable/hearth_border"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.942"
